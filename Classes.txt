@@ -1,0 +1,1 @@
+{0: 'excavator', 1: 'concrete_mixer_truck', 2: 'dump_truck', 3: 'loader', 4: 'moxy', 5: 'roller'}

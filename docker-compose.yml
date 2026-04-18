@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: zookeeper:latest
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - construction-net
+
+  kafka:
+    image: apache/kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+    networks:
+      - construction-net
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg17
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=construction_db
+    volumes:
+      - ./data/postgres_data:/var/lib/postgresql/data
+    networks:
+      - construction-net
+
+  cv_service:
+    build: ./cv_service
+    depends_on:
+      - kafka
+    volumes:
+      - ./data/input_videos:/app/data/input_videos
+    networks:
+      - construction-net
+
+  backend_service:
+    build: ./backend_service
+    depends_on:
+      - kafka
+      - timescaledb
+    networks:
+      - construction-net
+
+  ui_service:
+    build: ./ui_service
+    depends_on:
+      - timescaledb
+    ports:
+      - "8501:8501"
+    networks:
+      - construction-net
+
+networks:
+  construction-net:
+    driver: bridge
