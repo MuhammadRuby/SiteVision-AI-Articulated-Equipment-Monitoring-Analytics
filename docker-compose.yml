@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   zookeeper:
     image: zookeeper:latest
@@ -31,30 +29,13 @@ services:
       - construction-net
 
   cv_service:
-    build: ./cv_service
-    depends_on:
-      - kafka
-    volumes:
-      - ./data/input_videos:/app/data/input_videos
-    networks:
-      - construction-net
-
+    image: muhammadruby/cv-service:latest 
+    
   backend_service:
-    build: ./backend_service
-    depends_on:
-      - kafka
-      - timescaledb
-    networks:
-      - construction-net
-
+    image: muhammadruby/backend-service:latest
+    
   ui_service:
-    build: ./ui_service
-    depends_on:
-      - timescaledb
-    ports:
-      - "8501:8501"
-    networks:
-      - construction-net
+    image: muhammadruby/ui-dashboard:latest
 
 networks:
   construction-net:
