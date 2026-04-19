@@ -29,13 +29,49 @@ services:
       - construction-net
 
   cv_service:
-    image: muhammadruby/cv-service:latest 
-    
+    image: muhammadruby/cv-service:latest
+    depends_on:
+      - kafka
+      - timescaledb
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - DB_HOST=timescaledb
+      - DB_NAME=construction_db
+      - DB_USER=user
+      - DB_PASSWORD=pass
+    volumes:
+      - ./models:/app/models
+      - ./data/input_videos:/app/data/input_videos
+    networks:
+      - construction-net
+
   backend_service:
     image: muhammadruby/backend-service:latest
-    
+    depends_on:
+      - kafka
+      - timescaledb
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - DB_HOST=timescaledb
+      - DB_NAME=construction_db
+      - DB_USER=user
+      - DB_PASSWORD=pass
+    networks:
+      - construction-net
+
   ui_service:
     image: muhammadruby/ui-dashboard:latest
+    ports:
+      - "8501:8501"
+    depends_on:
+      - timescaledb
+    environment:
+      - DB_HOST=timescaledb
+      - DB_NAME=construction_db
+      - DB_USER=user
+      - DB_PASSWORD=pass
+    networks:
+      - construction-net
 
 networks:
   construction-net:
