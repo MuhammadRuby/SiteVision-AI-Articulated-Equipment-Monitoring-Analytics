@@ -1,6 +1,6 @@
 from ultralytics import YOLO
 import cv2
-from .activity_classifier import ActivityClassifier
+from activity_classifier import ActivityClassifier
 
 class EquipmentDetector:
     def __init__(self, model_path):
