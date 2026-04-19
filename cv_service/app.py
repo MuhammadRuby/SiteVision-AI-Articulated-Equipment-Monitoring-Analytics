@@ -8,7 +8,7 @@ def main():
     # الإعدادات من الـ Environment Variables (عشان الـ Docker)
     KAFKA_BROKER = os.getenv('KAFKA_BROKER', 'localhost:9092')
     VIDEO_PATH = '/data/input_videos/test_video.mp4'
-    MODEL_PATH = '/cv_service/best.pt'
+    MODEL_PATH = '../models/best.pt'
 
     detector = EquipmentDetector(MODEL_PATH)
     producer = KafkaProducer(
